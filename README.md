@@ -13,8 +13,7 @@ repetition of the same process, it seems nice to let the calculation
 to be done by his software. In this repository I use the free and
 very nice Computer Algebra System
 [maxima](https://maxima.sourceforge.io/index.html) or his equally
-very nice graphical interface
-[wxmaxima](href="https://wxmaxima-developers.github.io/wxmaxima/").
+very nice graphical interface [wxmaxima](https://wxmaxima-developers.github.io/wxmaxima/).
 
 
 <p style="line-height: 100%; margin-bottom: 0cm">The model of the
