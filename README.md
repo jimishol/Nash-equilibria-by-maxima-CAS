@@ -109,7 +109,7 @@ player, (-sk) means the profile that does not include the actions of the player 
 2nd and so on till the reward r_ak  for his last available 'ak' action.</span></p>
 <p><span lang="en-US">So, [[2,1,2],[17,22]] is from a 3 players game.
 It means that the player 2 has two actions, with rewards 17 for his first one and 22 for his second. He gets these rewards when he is facing
-the 1st action of player 1 and the 2nd action of player 2 [2,1,2].</span></p>
+the 1st action of player 1 and the 2nd action of player 3 [2,1,2].</span></p>
 <p style="line-height: 100%; margin-top: 0.42cm; margin-bottom: 0.21cm; page-break-after: avoid">
   <font face="Liberation Sans, sans-serif"><font size="4" style="font-size: 14pt"><i>The BR list</i></font></font></p>
 <p><span lang="en-US">is created from the R list. BR has the same
