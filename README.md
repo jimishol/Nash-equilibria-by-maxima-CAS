@@ -53,8 +53,8 @@ input</font></font></p>
 A convenient way to input the data is to use maxima to create, excluding the rewards, all other
 data automatically.
 
-Edit and execute the file <b>Pure_Nash_create_data.wxmx</b> (by 'wxmaxima')
-or the <b>Pure_Nash_create_data.wxm</b> (by 'maxima).
+Edit and execute the file <b>Pure_Nash_create_data.wxmx</b> (to use it by 'wxmaxima')
+or the <b>Pure_Nash_create_data.wxm</b> (to use it by 'maxima).
 
 The execution will create <span lang="en-US"><b>NashData.csv</b> </span><span lang="en-US">file
 with random, 1 digit, rewards.</span>
