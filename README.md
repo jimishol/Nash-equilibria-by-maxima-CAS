@@ -15,6 +15,9 @@ very nice Computer Algebra System
 [maxima](https://maxima.sourceforge.io/index.html) or his equally
 very nice graphical interface [wxmaxima](https://wxmaxima-developers.github.io/wxmaxima/).
 
+(The files were created by using exclusively the lovely 'wxmaxima' graphical interface. To acquire the equilibriums one does not
+actually need the 'wxmaxima' interface and the corresponded .wxmx files.)
+
 
 <p style="line-height: 100%; margin-bottom: 0cm">The model of the
 game is given by a file, in comma separated values format, called
