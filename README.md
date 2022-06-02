@@ -121,8 +121,8 @@ of actions that gives the maximum reward.</span></p>
 <p><span lang="en-US">For example if the list of the rewards [r1,...,r_ak] was
 [1,3,-2,3] then list2 would be equal to [2,4].</span></p>
 <p style="line-height: 100%; margin-top: 0.42cm; margin-bottom: 0.21cm; page-break-after: avoid">
-<font face="Liberation Sans, sans-serif"><font size="4" style="font-size: 14pt">Equilibrium
-criteria</font></font></p>
+<font face="Liberation Sans, sans-serif"><font size="4" style="font-size: 14pt"><i>Equilibrium
+  criteria</i></font></font></p>
 <p>are created as string. Every profile, so every combination of
 actions, is checked against Nash equilibrium criteria by executing
 that string.</p>
