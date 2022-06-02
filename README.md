@@ -1,2 +1,4 @@
 # Pure-Nash-by-maxima-CAS
 Finding pure Nash equilibriums for multiplayer games using Compter Algebra System (maxima CAS).
+
+Whoever starts to study game theory, starts to solve many exercises about finding pure Nash equilibrium in particular models. It is funy at the start but after one gets the essentials of the process, the proccess start to fill very repetitive. In that case, either because the student would like verification of his manual solution either he wants to avoid repetition of the same process, it seems nice to let the calculation to be done by his software. In that case by using the free and very nice Compter Algebra System [maxima](https://maxima.sourceforge.io/index.html) or his equally very nice graphical interface [wxmaxima](https://wxmaxima-developers.github.io/wxmaxima/).
