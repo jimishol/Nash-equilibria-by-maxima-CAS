@@ -1,6 +1,6 @@
 # Pure-Nash-by-maxima-CAS</p>
 Finding pure Nash
-equilibriums for multiplayer games using Computer Algebra System
+equilibria for multiplayer games using Computer Algebra System
 (maxima CAS).
 
 Whoever starts to
@@ -15,7 +15,7 @@ very nice Computer Algebra System
 [maxima](https://maxima.sourceforge.io/index.html) or his equally
 very nice graphical interface [wxmaxima](https://wxmaxima-developers.github.io/wxmaxima/).
 
-(The files were created by using exclusively the lovely 'wxmaxima' graphical interface. To acquire the equilibriums one does not
+(The files were created by using exclusively the lovely 'wxmaxima' graphical interface. To acquire the equilibria one does not
 actually need the 'wxmaxima' interface and the corresponded .wxmx files.)
 
 
@@ -73,15 +73,15 @@ one can give only the number of players, for example, as</span></p>
 number of actions for each player too.)</span></p>
 <p align="center" style="line-height: 100%; margin-top: 0.11cm; margin-bottom: 0.21cm; page-break-after: avoid">
 <font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">Pure
-Nash equilibriums</font></font></p>
-<p>To find pure Nash equilibriums one loads the <b>Pure_Nash.wxmx</b> by 'wxmaxima' and run it
+Nash equilibria</font></font></p>
+<p>To find pure Nash equilibria one loads the <b>Pure_Nash.wxmx</b> by 'wxmaxima' and run it
   or</p>
 execute
 
 
 <p><span lang="en-US"><B>maxima -b ~/Pure_Nash.wxm</B></span></p>
 <p><span lang="en-US">in a terminal.</span></p>
-<p><span lang="en-US">The equilibriums are given as a list of
+<p><span lang="en-US">The equilibria are given as a list of
 equilibrium lists. For example in</span></p>
 <p><span lang="en-US">[[7, 2, 3], [6, 9, 2], …]
   
