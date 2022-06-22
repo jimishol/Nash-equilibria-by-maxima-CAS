@@ -1,0 +1,140 @@
+Maxima 5.46.0 https://maxima.sourceforge.io
+using Lisp SBCL 2.2.5-1.1-suse
+Distributed under the GNU Public License. See the file COPYING.
+Dedicated to the memory of William Schelter.
+The function bug_report() provides bug reporting information.
+(%i1) batch("mixed_Nash.wxm")
+
+read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.wxm
+(%i2) L:read_nested_list("~/NashData.csv",",")
+(%i3) N:L[1][1]
+(%i4) for i thru N do n[i]:L[1][i+1]
+(%i5) L:rest(L,1)
+(%i6) for i in L do
+          block([tmp,last_tmp],tmp:pop(L),last_tmp::last(tmp),
+                tmp:rest(tmp,-1),
+                arraysetapply(e,tmp,
+                              if stringp(last_tmp) then eval_string(last_tmp)
+                                  else last_tmp))
+(%i7) R:[]
+(%i8) for ar thru N do
+          (arguments:[],
+           for i thru N do
+               arguments:append(arguments,[[sconcat(s,i),1,n[i]]]),
+           arguments[ar]:k,arguments:delete(k,arguments),list_args:[],
+           for i thru N-1 do list_args:append(list_args,arguments[i]),
+           list_vars:makelist(i[1],i,arguments),
+           smp_args:simplode(list_args,", "),
+           list_vars:makelist(sconcat("s",i),i,N),list_vars[ar]:k,
+           smp_vars:simplode(delete(k,list_vars),", "),
+           list_vars:append([ar],list_vars),
+           smp_all_vars:simplode(list_vars,", "),
+           mainE:sconcat("[[",ar,",",smp_vars,"],","makelist(e[",smp_all_vars,
+                         "], k, 1, n[ar])]"),
+           loopE:sconcat("create_list(",mainE,", ",smp_args,")"),
+           R:append(R,eval_string(loopE)))
+(%i9) fpprintprec:3
+(%o9)                                  3
+(%i10) for i thru N do s[i]:makelist(j,j,n[i])
+(%o10)                               done
+(%i11) S_all:makelist(s[i],i,1,N)
+(%i12) for i thru length(S_all) do S_all_set[i]:setify(S_all[i])
+(%o12)                               done
+(%i13) cart(S):=block([c,l],c:S[1],
+            for j from 2 thru N do c:cartesian_product_list(c,S[j]),
+            l:length(c),for i thru l do c[i]:flatten(c[i]),return(c))
+(%i14) mixed_fun(S):=block([c],c:cart(S),
+                 for ar thru N do
+                     block([ls],
+                           for j in S_all[ar] do arraysetapply(term,[ar,j],0),
+                           ls:lsum(P[ar,j],j,S[ar]),eq_one[ar]:ls = 1,
+                           list_P[ar]:if length(S[ar]) > 1 then args(ls)
+                                          else P[ar,S[ar][1]]),
+                 for player thru N do
+                     for x in c do
+                         (action:x[player],
+                          Pr:product(if ar # player then P[ar,x[ar]] else 1,
+                                     ar,1,N),
+                          Rkey:append([player],firstn(x,player-1),
+                                      lastn(x,N-player)),Rw:assoc(Rkey,R),
+                          term[player,action]
+                           :term[player,action]+Pr*Rw[action]),
+                 list_one:makelist(eq_one[k],k,1,N),
+                 P_one:flatten(makelist(list_P[k],k,1,N)),eq_rw:[],
+                 for ar thru N do
+                     (for i thru length(S[ar])-1 do
+                          eq_rw:append(eq_rw,
+                                       [
+                                        term[ar,S[ar][i]]
+                                          = term[ar,S[ar][i+1]]])),
+                 eq_all:append(list_one,eq_rw),realonly:true,
+                 sol:algsys(eq_all,P_one),ineq_P:makelist(0,i,P_one),
+                 tmp_mixed:[],
+                 for i thru length(sol) do
+                     if every(">",subst(sol[i],P_one),ineq_P)
+                         then push(sol[i],tmp_mixed),mixed:[],
+                 for x in tmp_mixed do
+                     block([tmp],mixed_rw:[],
+                           for player thru N do
+                               (action:S[player][1],
+                                tmp:float(subst(x,term[player,action])),
+                                mixed_rw:append(mixed_rw,[tmp])),
+                           push([x,mixed_rw],mixed)),
+                 for i thru length(S) do S_set[i]:setify(S[i]),
+                 for ar thru N do
+                     no_list[ar]:listify(
+                                 setdifference(S_all_set[ar],S_set[ar])),
+                 for player thru N do
+                     for action in no_list[player] do
+                         for x in c do
+                             (Pr:product(
+                                 if ar # player then P[ar,x[ar]] else 1,ar,1,
+                                 N),
+                              Rkey:append([player],firstn(x,player-1),
+                                          lastn(x,N-player)),Rw:assoc(Rkey,R),
+                              term[player,action]
+                               :term[player,action]+Pr*Rw[action]),
+                 for x in mixed do
+                     (filter_mixed:false,
+                      for player thru N do
+                          (max_no_list[player]:minf,
+                           for action in no_list[player] do
+                               max_no_list[player]
+                               :max(max_no_list[player],
+                                    float(subst(x[1],term[player,action]))),
+                           if x[2][player] < max_no_list[player]
+                               then filter_mixed:true),
+                      if filter_mixed then mixed:delete(x,mixed)),
+                 return(mixed))
+(%i15) for i thru N do subs[i]:full_listify(
+                               disjoin({},powerset(S_all_set[i])))
+(%o15)                               done
+(%i16) list_subs:makelist(subs[i],i,N)
+(%i17) string_list_subs:simplode(list_subs,", ")
+(%i18) cart_list:eval_string(concat("cartesian_product_list(",
+                                    string_list_subs,")"))
+(%i19) mixed_Nash:[]
+(%i20) for x in cart_list do mixed_Nash:append(mixed_Nash,mixed_fun(x))
+(%o20)                               done
+(%i21) equilibrium:0
+(%i22) for x in mixed_Nash do
+           (equilibrium:equilibrium+1,display(equilibrium),disp(x))
+                                equilibrium = 1
+
+                     [[P     = 1, P     = 1], [0.0, 0.0]]
+                        1, 1       2, 1
+
+                                equilibrium = 2
+
+                    1          2          1          2
+          [[P     = -, P     = -, P     = -, P     = -], [0.0, 0.0]]
+             1, 2   3   1, 1   3   2, 2   3   2, 1   3
+
+                                equilibrium = 3
+
+                   [[P     = 1, P     = 1], [0.667, 0.667]]
+                      1, 2       2, 2
+
+(%o22)                               done
+(%i23) "Created with wxMaxima 22.04.0"
+(%o24)  /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.wxm

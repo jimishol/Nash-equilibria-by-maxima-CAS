@@ -1,0 +1,225 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: comment start ]
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: title   start ]
+Reading data
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Read from NashData.csv in comma seperated format.  (Alter pathname if needed.)
+The first row records number of players and their actions. The count of actions starts from 1.
+n, a(1), a(2), ...,a(n)
+where n is the number of players and a(i) > 0, the number of actions that i_th player may chose.
+Rest rows records player, a profile and his reward for that profile. So, it constists of n+2 numbers.
+5,8,2,1,3,4,22
+Means that the 5th player, when 1st choses his 8th action, 2nd chooses his 2nd, 3nd his first action, forth his 3nd
+and himself, as 5th player, his 4th, gets a reward of 22.
+So, with n players with a(i) the number of actions of i_th player, the NashData.csv file consists of 1+a(1)*a(2)*...*a(n) rows.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+L:read_nested_list("~/NashData.csv", ",")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+N:L[1][1]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i:1 thru N do n[i]:L[1][i+1]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+L:rest(L,1)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i in L do block([tmp, last_tmp],
+    tmp:pop(L),
+    last_tmp::last(tmp),
+    tmp:rest(tmp, -1),
+    arraysetapply (e, tmp, if stringp(last_tmp) then eval_string(last_tmp) else last_tmp)
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Calculations
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Calculations */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+The arguments of 'create_list' command vary depending on the number of players. So, the command is evaluated, looping through N, as 'loopE' string that is executed after its creation.
+The next loop creates a list of rewards for every player and the profiles he is facing. So, every element of R consist of two lists
+[list1, [r1,...,r_ak]]
+where list1 as [k, s1,s2, ... (-sk) ...,sn] means that when player k is facing the si_th action of ith other player, (-sk) means the profile that does not include the actions of the player himself, gets reward r1 for his 1st action, r2 for his 2nd and so on till the reward for his last available action ak.
+So, [[2,1,2],[17,22]] is from a 3 players game. It means that the player 2 chooses from 2 actions. When he is facing the 1 action of player 1 and action 2 of player 2 [2,1,2], he gets reward 17 for his 1st action and 22 for his 2nd.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+R:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar:1 thru N do ( 
+    arguments:[], for i:1 thru N do arguments:append(arguments, [[sconcat(s,i),1,n[i]]]), arguments[ar]:k, arguments:delete(k, arguments),
+    list_args:[], for i:1 thru N-1 do list_args:append(list_args,arguments[i]), list_vars:makelist(i[1], i, arguments),
+    smp_args:simplode(list_args,", "),
+    list_vars:makelist(sconcat("s", i), i, N), list_vars[ar]:k,
+    smp_vars:simplode(delete(k,list_vars), ", "),
+    list_vars:append([ar],list_vars),
+    smp_all_vars:simplode(list_vars, ", "),
+    mainE:sconcat("[[",ar,",",smp_vars,"],","makelist(e[",smp_all_vars,"], k, 1, n[ar])]"),
+    loopE:sconcat("create_list(",mainE,", ",smp_args,")"),
+    R:append(R, eval_string(loopE))
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+For the Best Responses, BR has the same format as list R [list1, list2].
+list1 is the same [k, s1,s2, ... (-sk) ...,sn] .
+However, list2 consists of the list of indexes of actions that gives the maximum reward.
+For example if the rewards [r1,...,r_ak] was [1,3,-2,3] then list2=[2,4].
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+BR:create_list([i[1],sublist_indices(i[2], lambda([x], x = lmax(i[2])))], i, R)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+In order to find pure Nash equilibriums 'Nash_find' string is created from 'Nash_loop' and 'member_loop' strings.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: comment start ]
+Every profile, so every combination of actions, is checked against Nash equilibrium criteria. So,
+'Nash_loop' string is the series of 
+'for si: 1 thru n[i]' loops for every player from 1 to n.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Nash:[]$ Nash_loop:""$ member_loop:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+list_vars_0:makelist(concat(s, i), i, N)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 1 thru N do (list_vars:copylist(list_vars_0),
+    Nash_loop:sconcat(Nash_loop, "for s",ar,": ", 1, " thru n[", ar,"] do
+        "),
+    tmp_vars: list_vars, 
+    tmp_vars[ar]: k, 
+    tmp_vars: simplode(delete(k, tmp_vars), ", "),
+    member_loop: append(member_loop, [sconcat("member(", list_vars_0[ar], ", assoc([",ar, ", ",tmp_vars, "],  BR))")])
+        );
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+For n players, there are needed n checks to see if an action of every players belongs to his best responses.
+The 'member_loop' string constracts the nessesary n conditions of the 'if' statement.
+Each condition checks if an action of a particular player belongs to the set of his best responses against particular actions of the other players. For examble,  member(s2, assoc([2, s1, s3],  BR)) condition checks if the s2 action of player 2 belongs to his best responses given that player 1 choses his s1 action and player 3 his s3 action. 
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+member_loop: concat("if ", simplode(member_loop, " and "), " then
+    ")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Nash_find:concat(Nash_loop, member_loop, " ",
+    "       push([",simplode(list_vars_0, ", "),"], Nash)");
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+The calculations end with the evaluation of 'Nash_find' as command and its execution.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+eval_string(Nash_find)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Pure Nash equilibriums
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Nash_rw:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in Nash do (rw:[],
+    for player: 1 thru N do (
+         action:x[player],
+        Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
+        Rw:assoc(Rkey,R),rw:append(rw,[Rw[action]])
+        ),
+push([x,rw],Nash_rw)
+);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+equilibrium:0$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+equilibrium as [list of actions, list of rewards]
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in Nash_rw do(
+equilibrium:equilibrium+1, display(equilibrium),
+    disp(x)
+);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$

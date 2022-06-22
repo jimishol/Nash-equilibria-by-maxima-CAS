@@ -1,0 +1,145 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: comment start ]
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: title   start ]
+Random data creation for multiplayer games
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+stat:make_random_state (true) $ set_random_state (stat)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Input of randomness
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+rdm:8$                                         /* Random rewards are created as integers from 2 up to rdm+1. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Input
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: comment start ]
+of the number of players and the numbers of their actions.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Number of players and number of their actions. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*The format begins with number of players and is [Number of players, number of player's 1 actions, of player's 2, ..., and so on] */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+n: [2,2,2]$                            
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Optionally create random actions for each player, given only the number of players.
+Comment either the above line and edit the desired number of players N in next line or comment the next two lines and edit the desired list n. 
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*N:6$*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*n:makelist(2+random(rdm), i, 2, N+1)$ n:append([N], n);*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Automatic creation of players' rewards.
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Player's rewards. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop:""$ list_vars_0:makelist(concat(s, i), i, n[1])$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 1 thru n[1] do 
+    Loop:concat(Loop, "for s",ar,": ", 1, " thru n[", ar+1,"] do 
+        ")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop:sconcat(Loop, "arraysetapply(e, append([ar], ", list_vars_0,"), 2+random(rdm))")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 1 thru n[1] do 
+eval_string(Loop);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+store_append: file_output_append;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: false$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data(n, "~/NashData.csv"); 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: true;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data(e, "~/NashData.csv"); 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: store_append;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$

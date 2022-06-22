@@ -1,0 +1,271 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: comment start ]
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: title   start ]
+Reading data
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Read from NashData.csv in comma seperated format.  (Alter pathname if needed.)
+The first row records number of players and their actions. The count of actions starts from 1.
+n, a(1), a(2), ...,a(n)
+where n is the number of players and a(i) > 0, the number of actions that i_th player may chose.
+Rest rows records player, a profile and his reward for that profile. So, it constists of n+2 numbers.
+5,8,2,1,3,4,22
+Means that the 5th player, when 1st choses his 8th action, 2nd chooses his 2nd, 3nd his first action, forth his 3nd
+and himself, as 5th player, his 4th, gets a reward of 22.
+So, with n players with a(i) the number of actions of i_th player, the NashData.csv file consists of 1+a(1)*a(2)*...*a(n) rows.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+L:read_nested_list("~/NashData.csv", ",")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+N:L[1][1]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i:1 thru N do n[i]:L[1][i+1]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+L:rest(L,1)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i in L do block([tmp, last_tmp],
+    tmp:pop(L),
+    last_tmp::last(tmp),
+    tmp:rest(tmp, -1),
+    arraysetapply (e, tmp, if stringp(last_tmp) then eval_string(last_tmp) else last_tmp)
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Calculations
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Calculations */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+The arguments of 'create_list' command vary depending on the number of players. So, the command is evaluated, looping through N, as 'loopE' string that is executed after its creation.
+The next loop creates a list of rewards for every player and the profiles he is facing. So, every element of R consist of two lists
+[list1, [r1,...,r_ak]]
+where list1 as [k, s1,s2, ... (-sk) ...,sn] means that when player k is facing the si_th action of ith other player, (-sk) means the profile that does not include the actions of the player himself, gets reward r1 for his 1st action, r2 for his 2nd and so on till the reward for his last available action ak.
+So, [[2,1,2],[17,22]] is from a 3 players game. It means that the player 2 chooses from 2 actions. When he is facing the 1 action of player 1 and action 2 of player 2 [2,1,2], he gets reward 17 for his 1st action and 22 for his 2nd.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+R:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar:1 thru N do ( 
+    arguments:[], for i:1 thru N do arguments:append(arguments, [[sconcat(s,i),1,n[i]]]), arguments[ar]:k, arguments:delete(k, arguments),
+    list_args:[], for i:1 thru N-1 do list_args:append(list_args,arguments[i]), list_vars:makelist(i[1], i, arguments),
+    smp_args:simplode(list_args,", "),
+    list_vars:makelist(sconcat("s", i), i, N), list_vars[ar]:k,
+    smp_vars:simplode(delete(k,list_vars), ", "),
+    list_vars:append([ar],list_vars),
+    smp_all_vars:simplode(list_vars, ", "),
+    mainE:sconcat("[[",ar,",",smp_vars,"],","makelist(e[",smp_all_vars,"], k, 1, n[ar])]"),
+    loopE:sconcat("create_list(",mainE,", ",smp_args,")"),
+    R:append(R, eval_string(loopE))
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+create the set of all supports and evaluate equilimbrium for each one
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+fpprintprec : 3;            /* printed digits on solution in order to make them more readable*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i:1 thru N do
+s[i]:makelist(j,j,n[i]);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+S_all:makelist(s[i], i, 1, N)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i:1 thru length(S_all) do S_all_set[i]:setify(S_all[i]);            /*create sets of each player's actions in order to find their powersets*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+cart is the function that calculate the cartesian product on the actions of a spesific support S
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+cart(S):=block([c,l],           /*not the more elegant way to calculate the cartesian product on the actions of a spesific support S*/
+    c:S[1],
+    for j: 2 thru N do c:cartesian_product_list(c,S[j]),
+    l:length(c),
+    for i:1 thru l do c[i]:flatten(c[i]),
+    return(c)
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+mixed_fun is the function that calculate equilibrium for a spesific support S
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+mixed_fun(S):=block([c],
+    c:cart(S),
+    for ar:1 thru N do block([ls],
+        for j in S_all[ar] do (                 /*for each player ar the term, that is the product of probabilities of other players actions and the reward for every of his actions, is initialised to zero*/
+           arraysetapply (term, [ar, j], 0)
+         ),
+        ls:lsum(P[ar, j], j, S[ar]),
+        eq_one[ar]:ls=1,                        /*P[player, action] is the probabilty of player ar to choose action j. eq_one is the equation that sums these probabilities to 1*/
+        list_P[ar]:if length(S[ar])>1 then args(ls) else P[ar,S[ar][1]]             /*list_P[ar] is the list of unknown propabilities on actions of player ar*/
+    ),
+    for player: 1 thru N do (
+        for x in c do (
+            action:x[player],
+            Pr:product (if ar # player then P[ar,x[ar]] else 1, ar, 1, N),
+            Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
+            Rw:assoc(Rkey,R),
+            term[player,action]:term[player,action]+Pr*Rw[action]       /*term[player, action] is the expected reward of player if he chooses this actiom*/
+        )
+    ),
+    list_one:makelist(eq_one[k], k, 1, N),          /*all equations that sum probabilities to 1*/
+    P_one:flatten(makelist(list_P[k], k, 1, N)),  /*all unkowns*/
+    eq_rw:[],
+    for ar:1 thru N do (                                        /*all equations that equals the expected rewards for each action of the player*/ 
+        for i:1 thru length(S[ar])-1 do (
+            eq_rw:append(eq_rw, [term[ar,S[ar][i]]=term[ar,S[ar][i+1]]])
+        )
+    ),
+    eq_all:append(list_one, eq_rw),         /*all equations. Those that sum possibilities to 1 plus the ones that equalise rewards*/
+    realonly:true,                                          /*keep only solutions on real numbers*/
+    sol:algsys(eq_all, P_one),
+    ineq_P:makelist(0, i, P_one),
+    tmp_mixed:[],
+    for i:1 thru length(sol) do if every(">", subst(sol[i], P_one),ineq_P) then push(sol[i], tmp_mixed),            /*tmp_mixed are the solutions with probabilities greater than zero*/
+    mixed:[],
+    for x in tmp_mixed do block([tmp],
+        mixed_rw:[],
+        for player: 1 thru N do (
+            action:S[player][1],                                        /*since all expected rewards are equal, is enough the expected reward to be calculated only for the first action in support*/
+            tmp:float(subst(x, term[player,action])),
+            mixed_rw:append(mixed_rw,[tmp])
+        ),
+        push([x,mixed_rw],mixed)                        /*mixed is a list of the solutions along their expected reward*/
+    ),
+    for i:1 thru length(S) do S_set[i]:setify(S[i]),
+    for ar:1 thru N do no_list[ar]:listify(setdifference (S_all_set[ar], S_set[ar])),       /*no_list[ar] is the list of action of player ar that is not included to the examined support*/
+    for player: 1 thru N do (
+        for action in no_list[player] do (
+            for x in c do (
+                Pr:product (if ar # player then P[ar,x[ar]] else 1, ar, 1, N),
+                Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
+                Rw:assoc(Rkey,R),
+                term[player,action]:term[player,action]+Pr*Rw[action]
+            )
+        )
+    ),                                                                      /*the rewards for the actions that have zero probabilities are calculated*/
+    for x in mixed do (filter_mixed:false,
+        for player: 1 thru N do (max_no_list[player]:minf,
+            for action in no_list[player] do (
+                max_no_list[player]:max(max_no_list[player], float(subst(x[1], term[player,action])))
+            ),
+            if x[2][player] < max_no_list[player] then filter_mixed:true
+        ),
+        if filter_mixed then mixed:delete(x, mixed)         /*if some solution in mixed produce lesser reward than some of zero probability actions then it is deleted from mixed*/
+    ),
+    return(mixed)           /*the final mixed is the accepted solution on spesiphic suppoer S as mixed Nash equilibrium*/
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i])));        /*for every player create the set of all possible supports*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+list_subs:makelist(subs[i],i,N)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+string_list_subs:simplode(list_subs, ", ")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+cart_list:eval_string(concat("cartesian_product_list(", string_list_subs, ")"))$    /*the cartesian product on sets of all possible supports for each player*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+mixed_Nash:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in cart_list do (
+mixed_Nash:append(mixed_Nash, mixed_fun(x))
+    );                                          /*for each element S of cart_list find equilibrium and append to mixed_Nash list*/
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+equilibrium:0$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in mixed_Nash do(
+equilibrium:equilibrium+1, display(equilibrium),
+    disp(x)
+);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
