@@ -1,6 +1,6 @@
-# Pure-Nash-by-maxima-CAS</p>
-Finding pure Nash
-equilibria for multiplayer games using Computer Algebra System
+# Pure-and-mixed-Nash-equilibria-by-maxima-CAS</p>
+Finding Nash equilibria
+for multiplayer games using Computer Algebra System
 (maxima CAS).
 
 Whoever starts to
@@ -51,17 +51,17 @@ profile and 1 for the reward.)</p>
 <font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">Data
 input</font></font></p>
 A convenient way to input the data is to use maxima to create, excluding the rewards, all other
-data automatically.
+data automatically. In case that rewards is desirable to include operators edit last field as string, for examble 1,1,1,"1-1/3". 
 
-Edit and execute the file <b>Pure_Nash_create_data.wxmx</b> (to use it by 'wxmaxima')
-or the <b>Pure_Nash_create_data.wxm</b> (to use it by 'maxima).
+Edit and execute the file <b>Nash_create_data.wxmx</b> (to use it by 'wxmaxima')
+or the <b>Nash_create_data.wxm</b> (to use it by 'maxima).
 
 The execution will create <span lang="en-US"><b>NashData.csv</b> </span><span lang="en-US">file
 with random, 1 digit, rewards.</span>
 <p><span lang="en-US">After that, one only needs to replace the 1
-digit rewards by the desired ones.</span></p>
+digit rewards by the desired ones. In repository exists an edited examble of this file.</span></p>
 <p><span lang="en-US">On the basic use, one edits the
-  </span><span lang="en-US"><i>Pure_Nash_create_data</i> </span><span lang="en-US">file
+  </span><span lang="en-US"><i>Nash_create_data</i> </span><span lang="en-US">file
 and gives the first row as a list. For the example above the first
 row of data should be given as</span></p>
 <p><span lang="en-US">n:[</span><span lang="en-US">7,8,9,3,6,2,9,6</span><span lang="en-US">]</span></p>
@@ -74,26 +74,26 @@ number of actions for each player too.)</span></p>
 <p align="center" style="line-height: 100%; margin-top: 0.11cm; margin-bottom: 0.21cm; page-break-after: avoid">
 <font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">Pure
 Nash equilibria</font></font></p>
-<p>To find pure Nash equilibria one loads the <b>Pure_Nash.wxmx</b> by 'wxmaxima' and run it
+<p>To find pure Nash equilibria one loads the <b>pure_Nash.wxmx</b> by 'wxmaxima' and run it
   or</p>
 execute
 
 
-<p><span lang="en-US"><B>maxima -b ~/Pure_Nash.wxm</B></span></p>
+<p><span lang="en-US"><B>maxima -b ~/pure_Nash.wxm</B></span></p>
 <p><span lang="en-US">in a terminal.</span></p>
-<p><span lang="en-US">The equilibria are given as a list of
-equilibrium lists. For example in</span></p>
-<p><span lang="en-US">[[7, 2, 3], [6, 9, 2], …]
+<p><span lang="en-US">The equilibria are given as a list of pairs of
+equilibrium and rewards for this equilibrium lists. For example in</span></p>
+<p><span lang="en-US">[[[7, 2, 3], [16, 29, -2]], …]
   
-we see that the second equilibrium, in a 3 players’ game, consists of decisions
+we see that the first equilibrium, in a 3 players’ game, consists of decisions
 where 1</span><sup><span lang="en-US">st</span></sup><span lang="en-US">
-player chooses his 6</span><sup><span lang="en-US">th</span></sup><span lang="en-US">
-action, 2</span><sup><span lang="en-US">nd</span></sup><span lang="en-US">
-player chooses his 9</span><sup><span lang="en-US">th</span></sup><span lang="en-US">
-and 3nd player chooses his 2</span><sup><span lang="en-US">nd </span></sup><span lang="en-US">action.</span></p>
+player chooses his 7</span><sup><span lang="en-US">th</span></sup><span lang="en-US">
+action having reward 16, 2</span><sup><span lang="en-US">nd</span></sup><span lang="en-US">
+player chooses his 2</span><sup><span lang="en-US">th</span></sup><span lang="en-US"> having reward 29
+and 3nd player chooses his 3</span><sup><span lang="en-US">nd </span></sup><span lang="en-US">action having reward -2.</span></p>
 <p align="center" style="line-height: 100%; margin-top: 0.11cm; margin-bottom: 0.21cm; page-break-after: avoid">
 <font face="Liberation Sans, sans-serif"><font size="4" style="font-size: 14pt">Internally
-used process</font></font></p>
+used process for finding pure strategy equilibria.</font></font></p>
 <p>Lucking sufficient knowledge on my hobbies of maths and
 programming, I used ‘brutal’ force to acquire the results. I let 'maxima' to create, as strings, sequences of ‘for’
 loops and ‘if’ conditions, depending on the number of players and the number of actions that each one has in his disposal.</span></p>
@@ -126,3 +126,21 @@ of actions that gives the maximum reward.</span></p>
 <p>are created as string. Every profile, so every combination of
 actions, is checked against Nash equilibrium criteria by executing
 that string.</p>
+
+
+<p align="center" style="line-height: 100%; margin-top: 0.11cm; margin-bottom: 0.21cm; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="5" style="font-size: 18pt">Mixed
+Nash equilibria</font></font></p>
+<p>To find mixed Nash equilibria one loads the <b>mixed_Nash.wxmx</b> by 'wxmaxima' and run it
+  or</p>
+execute
+
+
+<p><span lang="en-US"><B>maxima -b ~/mixed_Nash.wxm</B></span></p>
+<p><span lang="en-US">in a terminal.</span></p>
+<p><span lang="en-US">The equilibria are given as a list of pairs of
+equilibrium (as a list of probabilities) and rewards for this equilibrium lists. 
+  
+  For the solutions, systems of equations are solved for every possible support and checked the solutions to be real, the probabilities greater than zero and rewards greater or equal to the rewards that are not included in support (have zero probability in mixed strategy). The systems increase rapidly as players or their actions increase. I can not tell the limit of my laptop but, for 4 players with 3 actions the 2 of them and 2 actions the other 2, my laptop needed 3minutes to solve the resulting 7\*3\*7\*3=441 systems. (A set of 3 actions has 7 subsets except of empty set and a set of 2 actions has 3 subsets). 
+  
+  An example of edited NashData.csv and the relevant outputs are included in repository.
