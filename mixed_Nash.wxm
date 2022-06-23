@@ -172,11 +172,11 @@ mixed_fun(S):=block([c],
         eq_one[ar]:ls=1,                        /*P[player, action] is the probabilty of player ar to choose action j. eq_one is the equation that sums these probabilities to 1*/
         list_P[ar]:if length(S[ar])>1 then args(ls) else P[ar,S[ar][1]]             /*list_P[ar] is the list of unknown propabilities on actions of player ar*/
     ),
-    for player: 1 thru N do (
+    for player: 1 thru N do ( lng:length(S[player]),
         for x in c do (
             Pr:product (if ar # player then P[ar,x[ar]] else 1, ar, 1, N),
             Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
-            Rw:assoc(Rkey,R),
+            Rw:assoc(Rkey,R)/lng,
             for action in S_all[player] do (
             term[player,action]:term[player,action]+Pr*Rw[action]       /*term[player, action] is the expected reward of player if he chooses this actiom*/
              )   
