@@ -174,12 +174,13 @@ mixed_fun(S):=block([c],
     ),
     for player: 1 thru N do (
         for x in c do (
-            action:x[player],
             Pr:product (if ar # player then P[ar,x[ar]] else 1, ar, 1, N),
             Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
             Rw:assoc(Rkey,R),
+            for action in S_all[player] do (
             term[player,action]:term[player,action]+Pr*Rw[action]       /*term[player, action] is the expected reward of player if he chooses this actiom*/
-        )
+             )   
+        )    
     ),
     list_one:makelist(eq_one[k], k, 1, N),          /*all equations that sum probabilities to 1*/
     P_one:flatten(makelist(list_P[k], k, 1, N)),  /*all unkowns*/
@@ -207,16 +208,6 @@ mixed_fun(S):=block([c],
     ),
     for i:1 thru length(S) do S_set[i]:setify(S[i]),
     for ar:1 thru N do no_list[ar]:listify(setdifference (S_all_set[ar], S_set[ar])),       /*no_list[ar] is the list of action of player ar that is not included to the examined support*/
-    for player: 1 thru N do (
-        for action in no_list[player] do (
-            for x in c do (
-                Pr:product (if ar # player then P[ar,x[ar]] else 1, ar, 1, N),
-                Rkey:append([player], firstn(x,player-1),lastn(x,N-player)),
-                Rw:assoc(Rkey,R),
-                term[player,action]:term[player,action]+Pr*Rw[action]
-            )
-        )
-    ),                                                                      /*the rewards for the actions that have zero probabilities are calculated*/
     for x in mixed do (filter_mixed:false,
         for player: 1 thru N do (max_no_list[player]:minf,
             for action in no_list[player] do (
