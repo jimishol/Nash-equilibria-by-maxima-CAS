@@ -61,6 +61,11 @@ n: [2,2,2]$
 /* [wxMaxima: input   end   ] */
 
 
+/* [wxMaxima: input   start ] */
+assumptions:"assume( )"$
+/* [wxMaxima: input   end   ] */
+
+
 /* [wxMaxima: comment start ]
 Optionally create random actions for each player, given only the number of players.
 Comment either the above line and edit the desired number of players N in next line or comment the next two lines and edit the desired list n. 
@@ -127,6 +132,11 @@ write_data(n, "~/NashData.csv");
 
 /* [wxMaxima: input   start ] */
 file_output_append: true;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data([assumptions], "~/NashData.csv"); 
 /* [wxMaxima: input   end   ] */
 
 

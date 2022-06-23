@@ -55,6 +55,16 @@ L:rest(L,1)$
 
 
 /* [wxMaxima: input   start ] */
+eval_string(L[1][1])$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+L:rest(L,1)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
 for i in L do block([tmp, last_tmp],
     tmp:pop(L),
     last_tmp::last(tmp),

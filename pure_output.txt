@@ -10,36 +10,38 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/pure_Nash.wx
 (%i3) N:L[1][1]
 (%i4) for i thru N do n[i]:L[1][i+1]
 (%i5) L:rest(L,1)
-(%i6) for i in L do
+(%i6) eval_string(L[1][1])
+(%i7) L:rest(L,1)
+(%i8) for i in L do
           block([tmp,last_tmp],tmp:pop(L),last_tmp::last(tmp),
                 tmp:rest(tmp,-1),
                 arraysetapply(e,tmp,
                               if stringp(last_tmp) then eval_string(last_tmp)
                                   else last_tmp))
-(%i7) R:[]
-(%i8) for ar thru N do
-          (arguments:[],
-           for i thru N do
-               arguments:append(arguments,[[sconcat(s,i),1,n[i]]]),
-           arguments[ar]:k,arguments:delete(k,arguments),list_args:[],
-           for i thru N-1 do list_args:append(list_args,arguments[i]),
-           list_vars:makelist(i[1],i,arguments),
-           smp_args:simplode(list_args,", "),
-           list_vars:makelist(sconcat("s",i),i,N),list_vars[ar]:k,
-           smp_vars:simplode(delete(k,list_vars),", "),
-           list_vars:append([ar],list_vars),
-           smp_all_vars:simplode(list_vars,", "),
-           mainE:sconcat("[[",ar,",",smp_vars,"],","makelist(e[",smp_all_vars,
-                         "], k, 1, n[ar])]"),
-           loopE:sconcat("create_list(",mainE,", ",smp_args,")"),
-           R:append(R,eval_string(loopE)))
-(%i9) BR:create_list([i[1],sublist_indices(i[2],lambda([x],x = lmax(i[2])))],
-                     i,R)
-(%i10) Nash:[]
-(%i11) Nash_loop:""
-(%i12) member_loop:[]
-(%i13) list_vars_0:makelist(concat(s,i),i,N)
-(%i14) for ar thru N do
+(%i9) R:[]
+(%i10) for ar thru N do
+           (arguments:[],
+            for i thru N do
+                arguments:append(arguments,[[sconcat(s,i),1,n[i]]]),
+            arguments[ar]:k,arguments:delete(k,arguments),list_args:[],
+            for i thru N-1 do list_args:append(list_args,arguments[i]),
+            list_vars:makelist(i[1],i,arguments),
+            smp_args:simplode(list_args,", "),
+            list_vars:makelist(sconcat("s",i),i,N),list_vars[ar]:k,
+            smp_vars:simplode(delete(k,list_vars),", "),
+            list_vars:append([ar],list_vars),
+            smp_all_vars:simplode(list_vars,", "),
+            mainE:sconcat("[[",ar,",",smp_vars,"],","makelist(e[",
+                          smp_all_vars,"], k, 1, n[ar])]"),
+            loopE:sconcat("create_list(",mainE,", ",smp_args,")"),
+            R:append(R,eval_string(loopE)))
+(%i11) BR:create_list([i[1],sublist_indices(i[2],lambda([x],x = lmax(i[2])))],
+                      i,R)
+(%i12) Nash:[]
+(%i13) Nash_loop:""
+(%i14) member_loop:[]
+(%i15) list_vars_0:makelist(concat(s,i),i,N)
+(%i16) for ar thru N do
            (list_vars:copylist(list_vars_0),
             Nash_loop:sconcat(Nash_loop,"for s",ar,": ",1," thru n[",ar,
                               "] do
@@ -48,28 +50,28 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/pure_Nash.wx
             member_loop:append(member_loop,
                                [sconcat("member(",list_vars_0[ar],", assoc([",
                                         ar,", ",tmp_vars,"],  BR))")]))
-(%o14)                               done
-(%i15) member_loop:concat("if ",simplode(member_loop," and ")," then
+(%o16)                               done
+(%i17) member_loop:concat("if ",simplode(member_loop," and ")," then
     ")
-(%i16) Nash_find:concat(Nash_loop,member_loop," ","       push([",
+(%i18) Nash_find:concat(Nash_loop,member_loop," ","       push([",
                         simplode(list_vars_0,", "),"], Nash)")
-(%o16) for s1: 1 thru n[1] do
+(%o18) for s1: 1 thru n[1] do
         for s2: 1 thru n[2] do
         if member(s1, assoc([1, s2],  BR)) and member(s2, assoc([2, s1],  BR))\
  then
             push([s1, s2], Nash)
-(%i17) eval_string(Nash_find)
-(%i18) Nash_rw:[]
-(%i19) for x in Nash do
+(%i19) eval_string(Nash_find)
+(%i20) Nash_rw:[]
+(%i21) for x in Nash do
            (rw:[],
             for player thru N do
                 (action:x[player],
                  Rkey:append([player],firstn(x,player-1),lastn(x,N-player)),
                  Rw:assoc(Rkey,R),rw:append(rw,[Rw[action]])),
             push([x,rw],Nash_rw))
-(%o19)                               done
-(%i20) equilibrium:0
-(%i21) for x in Nash_rw do (equilibrium:equilibrium+1,display(equilibrium),
+(%o21)                               done
+(%i22) equilibrium:0
+(%i23) for x in Nash_rw do (equilibrium:equilibrium+1,display(equilibrium),
                             disp(x))
                                 equilibrium = 1
 
@@ -77,10 +79,8 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/pure_Nash.wx
 
                                 equilibrium = 2
 
-                                         2  2
-                               [[2, 2], [-, -]]
-                                         3  3
+                           [[2, 2], [1 - c, 1 - c]]
 
-(%o21)                               done
-(%i22) "Created with wxMaxima 22.04.0"
-(%o23)  /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/pure_Nash.wxm
+(%o23)                               done
+(%i24) "Created with wxMaxima 22.04.0"
+(%o25)  /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/pure_Nash.wxm
