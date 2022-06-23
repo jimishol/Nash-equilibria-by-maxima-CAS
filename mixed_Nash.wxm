@@ -184,7 +184,7 @@ mixed_fun(S):=block([c],
     sol:algsys(eq_all, P_one),
     ineq_P:makelist(0, i, P_one),
     tmp_mixed:[],
-    for i:1 thru length(sol) do if every(">", subst(sol[i], P_one),ineq_P) then push(sol[i], tmp_mixed),            /*tmp_mixed are the solutions with probabilities greater than zero*/
+    for i:1 thru length(sol) do if every(">", subst(sol[i], P_one),ineq_P) # false then push(sol[i], tmp_mixed),            /*tmp_mixed are the solutions with probabilities greater than zero*/
     mixed:[],
     for x in tmp_mixed do block([tmp],
         mixed_rw:[],
@@ -247,9 +247,12 @@ mixed_Nash:[]$
 
 
 /* [wxMaxima: input   start ] */
-for x in cart_list do (
-mixed_Nash:append(mixed_Nash, mixed_fun(x))
-    );                                          /*for each element S of cart_list find equilibrium and append to mixed_Nash list*/
+ratprint: false$                /* in order not to print `rat' replaced messages */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in cart_list do mixed_Nash:append(mixed_Nash, mixed_fun(x))$              /*for each element S of cart_list find equilibrium and append to mixed_Nash list*/
 /* [wxMaxima: input   end   ] */
 
 
