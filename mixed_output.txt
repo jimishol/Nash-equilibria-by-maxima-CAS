@@ -10,7 +10,7 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.w
 (%i3) N:L[1][1]
 (%i4) for i thru N do n[i]:L[1][i+1]
 (%i5) L:rest(L,1)
-(%i6) eval_string(L[1][1])
+(%i6) assumptions:eval_string(L[1][1])
 (%i7) L:rest(L,1)
 (%i8) for i in L do
           block([tmp,last_tmp],tmp:pop(L),last_tmp::last(tmp),
@@ -53,14 +53,16 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.w
                            list_P[ar]:if length(S[ar]) > 1 then args(ls)
                                           else P[ar,S[ar][1]]),
                  for player thru N do
-                     for x in c do
-                         (action:x[player],
-                          Pr:product(if ar # player then P[ar,x[ar]] else 1,
-                                     ar,1,N),
-                          Rkey:append([player],firstn(x,player-1),
-                                      lastn(x,N-player)),Rw:assoc(Rkey,R),
-                          term[player,action]
-                           :term[player,action]+Pr*Rw[action]),
+                     (lng:length(S[player]),
+                      for x in c do
+                          (Pr:product(if ar # player then P[ar,x[ar]] else 1,
+                                      ar,1,N),
+                           Rkey:append([player],firstn(x,player-1),
+                                       lastn(x,N-player)),
+                           Rw:assoc(Rkey,R)/lng,
+                           for action in S_all[player] do
+                               term[player,action]
+                               :term[player,action]+Pr*Rw[action])),
                  list_one:makelist(eq_one[k],k,1,N),
                  P_one:flatten(makelist(list_P[k],k,1,N)),eq_rw:[],
                  for ar thru N do
@@ -73,39 +75,40 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.w
                  sol:algsys(eq_all,P_one),ineq_P:makelist(0,i,P_one),
                  tmp_mixed:[],
                  for i thru length(sol) do
-                     if every(">",subst(sol[i],P_one),ineq_P) # false
-                         then push(sol[i],tmp_mixed),mixed:[],
+                     (fourier_0:[],
+                      flag_zero_ineq:every(">",subst(sol[i],P_one),ineq_P),
+                      if flag_zero_ineq # false and flag_zero_ineq # true
+                          then fourier_0
+                          :makelist(subst(sol[i],x) > 0,x,P_one),
+                      if flag_zero_ineq # false
+                          then push([sol[i],[fourier_0,%rnum_list]],
+                                    tmp_mixed)),mixed:[],
                  for x in tmp_mixed do
                      block([tmp],mixed_rw:[],
                            for player thru N do
                                (action:S[player][1],
-                                tmp:float(subst(x,term[player,action])),
+                                tmp:float(subst(x[1],term[player,action])),
                                 mixed_rw:append(mixed_rw,[tmp])),
                            push([x,mixed_rw],mixed)),
                  for i thru length(S) do S_set[i]:setify(S[i]),
                  for ar thru N do
                      no_list[ar]:listify(
                                  setdifference(S_all_set[ar],S_set[ar])),
-                 for player thru N do
-                     for action in no_list[player] do
-                         for x in c do
-                             (Pr:product(
-                                 if ar # player then P[ar,x[ar]] else 1,ar,1,
-                                 N),
-                              Rkey:append([player],firstn(x,player-1),
-                                          lastn(x,N-player)),Rw:assoc(Rkey,R),
-                              term[player,action]
-                               :term[player,action]+Pr*Rw[action]),
                  for x in mixed do
-                     (filter_mixed:false,
+                     (filter_mixed:[],
                       for player thru N do
                           (max_no_list[player]:minf,
                            for action in no_list[player] do
                                max_no_list[player]
                                :max(max_no_list[player],
-                                    float(subst(x[1],term[player,action]))),
+                                    float(
+                                     subst(x[1][1],term[player,action]))),
                            if x[2][player] < max_no_list[player]
-                               then filter_mixed:true),
+                               then filter_mixed:true,
+                           x[1][2][1]:append(x[1][2][1],
+                                             [
+                                              x[2][player]
+                                                >= max_no_list[player]])),
                       if filter_mixed then mixed:delete(x,mixed)),
                  return(mixed))
 (%i17) for i thru N do subs[i]:full_listify(
@@ -119,23 +122,54 @@ read and interpret /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.w
 (%i22) ratprint:false
 (%i23) for x in cart_list do mixed_Nash:append(mixed_Nash,mixed_fun(x))
 (%i24) equilibrium:0
-(%i25) for x in mixed_Nash do
-           (equilibrium:equilibrium+1,display(equilibrium),disp(x))
+(%i25) load(fourier_elim)
+(%o25)   /usr/share/maxima/5.46.0/share/fourier_elim/fourier_elim.lisp
+(%i26) for x in mixed_Nash do
+           (assum:unique(flatten(makelist(sublist(args(x),symbolp),x,
+                                          assumptions))),
+            cont:fourier_elim(append(x[1][2][1],assumptions),
+                              append(x[1][2][2],assum)),scont:sconcat(cont),
+            equilibrium:equilibrium+1,disp(" "),display(equilibrium),
+            disp(x[1][1],sconcat("rewards are ",x[2])),
+            if scont # "universalset" then disp("contitions are ",cont))
+                                        
+
                                 equilibrium = 1
 
-                     [[P     = 1, P     = 1], [0.0, 0.0]]
-                        1, 1       2, 1
+                            [P     = 1, P     = 1]
+                              1, 1       2, 1
+
+                             rewards are [0.0,0.0]
+
+                                contitions are 
+
+                                [0 < c, c < 1]
+
+                                        
 
                                 equilibrium = 2
 
-      [[P     = c, P     = 1 - c, P     = c, P     = 1 - c], [0.0, 0.0]]
-         1, 2       1, 1           2, 2       2, 1
+             [P     = c, P     = 1 - c, P     = c, P     = 1 - c]
+               1, 2       1, 1           2, 2       2, 1
+
+                             rewards are [0.0,0.0]
+
+                                contitions are 
+
+                                [0 < c, c < 1]
+
+                                        
 
                                 equilibrium = 3
 
-             [[P     = 1, P     = 1], [1.0 - 1.0 c, 1.0 - 1.0 c]]
-                1, 2       2, 2
+                            [P     = 1, P     = 1]
+                              1, 2       2, 2
 
-(%o25)                               done
-(%i26) "Created with wxMaxima 22.04.0"
-(%o27)  /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.wxm
+                       rewards are [1.0-1.0*c,1.0-1.0*c]
+
+                                contitions are 
+
+                                [0 < c, c < 1]
+
+(%i27) "Created with wxMaxima 22.04.0"
+(%o28)  /home/jimishol/my_github/Pure-Nash-by-maxima-CAS/mixed_Nash.wxm
