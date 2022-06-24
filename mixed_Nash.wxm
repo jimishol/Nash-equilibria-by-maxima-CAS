@@ -55,7 +55,7 @@ L:rest(L,1)$
 
 
 /* [wxMaxima: input   start ] */
-eval_string(L[1][1])$
+assumptions:eval_string(L[1][1])$
 /* [wxMaxima: input   end   ] */
 
 
@@ -195,27 +195,32 @@ mixed_fun(S):=block([c],
     sol:algsys(eq_all, P_one),
     ineq_P:makelist(0, i, P_one),
     tmp_mixed:[],
-    for i:1 thru length(sol) do if every(">", subst(sol[i], P_one),ineq_P) # false then push(sol[i], tmp_mixed),            /*tmp_mixed are the solutions with probabilities greater than zero*/
+    for i:1 thru length(sol) do (fourier_0:[],
+        flag_zero_ineq: every(">", subst(sol[i], P_one),ineq_P),
+        if flag_zero_ineq # false and flag_zero_ineq # true then fourier_0:makelist(subst(sol[i], x)>0,x,P_one),
+        if flag_zero_ineq # false then push([sol[i], [fourier_0, %rnum_list]], tmp_mixed)           /*tmp_mixed are the solutions with probabilities greater than zero*/
+    ),
     mixed:[],
     for x in tmp_mixed do block([tmp],
         mixed_rw:[],
         for player: 1 thru N do (
             action:S[player][1],                                        /*since all expected rewards are equal, is enough the expected reward to be calculated only for the first action in support*/
-            tmp:float(subst(x, term[player,action])),
+            tmp:float(subst(x[1], term[player,action])),
             mixed_rw:append(mixed_rw,[tmp])
         ),
         push([x,mixed_rw],mixed)                        /*mixed is a list of the solutions along their expected reward*/
     ),
     for i:1 thru length(S) do S_set[i]:setify(S[i]),
     for ar:1 thru N do no_list[ar]:listify(setdifference (S_all_set[ar], S_set[ar])),       /*no_list[ar] is the list of action of player ar that is not included to the examined support*/
-    for x in mixed do (filter_mixed:false,
-        for player: 1 thru N do (max_no_list[player]:minf,
+    for x in mixed do (filter_mixed:[],
+        for player: 1 thru N do (max_no_list[player]: minf,
             for action in no_list[player] do (
-                max_no_list[player]:max(max_no_list[player], float(subst(x[1], term[player,action])))
+                max_no_list[player]:max(max_no_list[player], float(subst(x[1][1], term[player,action])))
             ),
-            if x[2][player] < max_no_list[player] then filter_mixed:true
+            if x[2][player] < max_no_list[player] then filter_mixed:true,
+                x[1][2][1]: append(x[1][2][1], [x[2][player] >= max_no_list[player]])
         ),
-        if filter_mixed then mixed:delete(x, mixed)         /*if some solution in mixed produce lesser reward than some of zero probability actions then it is deleted from mixed*/
+        if filter_mixed then mixed:delete(x, mixed)       /*if some solution in mixed produce lesser reward than some of zero probability actions then it is deleted from mixed*/
     ),
     return(mixed)           /*the final mixed is the accepted solution on spesiphic suppoer S as mixed Nash equilibrium*/
 )$
@@ -263,10 +268,18 @@ equilibrium:0$
 
 
 /* [wxMaxima: input   start ] */
+load(fourier_elim);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
 for x in mixed_Nash do(
-equilibrium:equilibrium+1, display(equilibrium),
-    disp(x)
-);
+    assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions))),
+    cont:(fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum))), scont:sconcat(cont), 
+equilibrium:equilibrium+1, disp(" "),display(equilibrium),
+    disp(x[1][1], sconcat("rewards are ", x[2])), 
+        if scont # "universalset" then disp("contitions are ", cont)
+)$
 /* [wxMaxima: input   end   ] */
 
 
