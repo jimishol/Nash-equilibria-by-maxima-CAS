@@ -275,10 +275,13 @@ load(fourier_elim);
 /* [wxMaxima: input   start ] */
 for x in mixed_Nash do(
     assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions))),
-    cont:(fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum))), scont:sconcat(cont), 
-equilibrium:equilibrium+1, disp(" "),display(equilibrium),
-    disp(x[1][1], sconcat("rewards are ", x[2])), 
+    cont:fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum)), scont:sconcat(cont), 
+    if scont = "emptyset" then delete(x, mixed_Nash) else (
+        equilibrium:equilibrium+1,
+        disp(" "),display(equilibrium),
+        disp(x[1][1], sconcat("rewards are ", x[2])), 
         if scont # "universalset" then disp("contitions are ", cont)
+    )    
 )$
 /* [wxMaxima: input   end   ] */
 
