@@ -192,14 +192,15 @@ mixed_fun(S):=block([c],
     ),
     eq_all:append(list_one, eq_rw),         /*all equations. Those that sum possibilities to 1 plus the ones that equalise rewards*/
     realonly:true,                                          /*keep only solutions on real numbers*/
-    sol:algsys(eq_all, P_one),
+    sol:algsys(eq_all, P_one),                  /*sol[i] is the ith solution and is a list [...,P[i,j]=something, ...]  */
     ineq_P:makelist(0, i, P_one),
     tmp_mixed:[],
     for i:1 thru length(sol) do (fourier_0:[],
         flag_zero_ineq: every(">", subst(sol[i], P_one),ineq_P),
-        if flag_zero_ineq # false and flag_zero_ineq # true then fourier_0:makelist(subst(sol[i], x)>0,x,P_one),
+        if flag_zero_ineq # false and flag_zero_ineq # true then fourier_0:makelist(subst(sol[i], x)>0,x,P_one),        /*fourier_0 is a list initially consting of P[i,j]>0 */
         if flag_zero_ineq # false then push([sol[i], [fourier_0, %rnum_list]], tmp_mixed)           /*tmp_mixed are the solutions with probabilities greater than zero*/
-    ),
+    ),                                                              /* tmp_mixed[i] derives from ith solution and initially equals to [ sol[i], [[...,P[i,j]>o,...], [variables introduced by solution]] ] */
+                                                                    /* The inequalities needs be solved later against the variables introduced by solution */
     mixed:[],
     for x in tmp_mixed do block([tmp],
         mixed_rw:[],
@@ -209,26 +210,26 @@ mixed_fun(S):=block([c],
             mixed_rw:append(mixed_rw,[tmp])
         ),
         push([x,mixed_rw],mixed)                        /*mixed is a list of the solutions along their expected reward*/
-    ),
+    ),                                                                      /*So, mixed[i] has the form [ [ sol[i], [[...,initial inequalities P[i,j]>o,...], [variables introduced by solution]] ], [..., reward of player i, ...] ] */
     for i:1 thru length(S) do S_set[i]:setify(S[i]),
-    for ar:1 thru N do no_list[ar]:listify(setdifference (S_all_set[ar], S_set[ar])),       /*no_list[ar] is the list of action of player ar that is not included to the examined support*/
+    for ar:1 thru N do no_list[ar]:listify(setdifference (S_all_set[ar], S_set[ar])),       /*no_list[ar] is the list of action of player 'ar' that is not included to the examined support*/
     for x in mixed do (filter_mixed:[],
         for player: 1 thru N do (max_no_list[player]: minf,
             for action in no_list[player] do (
                 max_no_list[player]:max(max_no_list[player], float(subst(x[1][1], term[player,action])))
             ),
             if x[2][player] < max_no_list[player] then filter_mixed:true,
-                x[1][2][1]: append(x[1][2][1], [x[2][player] >= max_no_list[player]])
-        ),
+            x[1][2][1]: append(x[1][2][1], [x[2][player] >= max_no_list[player]])       /* in initial inequalities P[i,j]>o we append the inequalities neccesary for equilibrium to be */
+        ),                                                                                                                      /* So, the list of inequalities become [...P[i,j]>0,..,players' rewards > rewards out of support,...] */
         if filter_mixed then mixed:delete(x, mixed)       /*if some solution in mixed produce lesser reward than some of zero probability actions then it is deleted from mixed*/
     ),
-    return(mixed)           /*the final mixed is the accepted solution on spesiphic suppoer S as mixed Nash equilibrium*/
+    return(mixed)           /*the final mixed is the accepted solutions on the speciphic support S as mixed Nash equilibria */
 )$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
-for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i])));        /*for every player create the set of all possible supports*/
+for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i])));        /*for every player create the set of all possible supports if the solution to inequalities is not empty*/
 /* [wxMaxima: input   end   ] */
 
 
@@ -243,7 +244,7 @@ string_list_subs:simplode(list_subs, ", ")$
 
 
 /* [wxMaxima: input   start ] */
-cart_list:eval_string(concat("cartesian_product_list(", string_list_subs, ")"))$    /*the cartesian product on sets of all possible supports for each player*/
+cart_list:eval_string(concat("cartesian_product_list(", string_list_subs, ")"))$    /*the cartesian product on sets of all possible supports (subsets of set of actions) for each player*/
 /* [wxMaxima: input   end   ] */
 
 
@@ -273,11 +274,22 @@ load(fourier_elim);
 
 
 /* [wxMaxima: input   start ] */
-for x in mixed_Nash do(
+Nash:copylist(mixed_Nash)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for x in Nash do(
     assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions))),
     cont:fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum)), scont:sconcat(cont), 
-    if scont = "emptyset" then delete(x, mixed_Nash) else (
+    if scont = "emptyset" then (                /* If the solution to inequalities solved against the variables introduced by solution
+                                                                                                                                    is empty then there is no equilibrium */
+            delete(x, Nash),
+            delete(x, mixed_Nash)
+        )
+        else (                         
         equilibrium:equilibrium+1,
+        x[1][2]:cont,                                   /*instead of the pair of inequalities and the introduced variables, in Nash list, the solutions of them is stored */
         disp(" "),display(equilibrium),
         disp(x[1][1], sconcat("rewards are ", x[2])), 
         if scont # "universalset" then disp("contitions are ", cont)

@@ -157,3 +157,14 @@ equilibrium (as a list of probabilities) and list of rewards, one for each playe
   For the solutions, systems of equations are solved for every possible support and checked the solutions to be real, the probabilities greater than zero or in 'unknown' status and rewards greater or equal to the rewards that are not included in support (have zero probability in mixed strategy). The systems increase rapidly as players or their actions increase. I can not tell the limit of my laptop but, for 4 players with 3 actions the 2 of them and 2 actions the other 2, my laptop needed 3minutes to solve the resulting 7\*3\*7\*3=441 systems. (A set of 3 actions has 7 subsets, except of empty set, and a set of 2 actions has 3 such subsets). 
   
   An example of edited NashData.csv and the relevant outputs are included in present repository.
+
+
+The mixed equilibria are stored in **Nash** list with each element in the form
+
+
+[ [[solutions], [conditions]], [rewards] ]
+So,
+
+*  Nash[10][2] are the rewards of 10th equilibrium.
+*  Nash[10][1][1] are the probabilities of distribution of 10th equilibrium
+*  Nash[10][1][2] are the conditions for the 10th equilibrium to be.
