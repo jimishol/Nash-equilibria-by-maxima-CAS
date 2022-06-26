@@ -60,6 +60,11 @@ assumptions:eval_string(L[1][1])$
 
 
 /* [wxMaxima: input   start ] */
+assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions)))$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
 L:rest(L,1)$
 /* [wxMaxima: input   end   ] */
 
@@ -280,7 +285,6 @@ Nash:copylist(mixed_Nash)$
 
 /* [wxMaxima: input   start ] */
 for x in Nash do(
-    assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions))),
     cont:fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum)), scont:sconcat(cont), 
     if scont = "emptyset" then (                /* If the solution to inequalities solved against the variables introduced by solution
                                                                                                                                     is empty then there is no equilibrium */
