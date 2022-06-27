@@ -65,6 +65,11 @@ assum: unique(flatten(makelist(sublist(args(x), symbolp),x, assumptions)))$
 
 
 /* [wxMaxima: input   start ] */
+for i:1 thru length(assum) do declare(i, real);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
 L:rest(L,1)$
 /* [wxMaxima: input   end   ] */
 
