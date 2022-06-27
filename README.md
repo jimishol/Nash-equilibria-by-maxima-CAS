@@ -172,4 +172,15 @@ So,
 
 **Limitations**
 Except from the obvious limitations on memory and on length of strings that are constructed (for the last, specially in pure_Nash.wxm, if it remains as it is), limitations derive also from the main commands (*alg_sys* and *fourier_elim*) that actually find equilibria.
-So, if conditions, for example, computed (from *fourier_elim*) as [a1\*a2+a1\*a3+a2\*a3>0, -(a1\*a2+a1\*a3+a2\*a3)>0] one must exclude the solution from equilibria manually, because *fourier_elim* seems it can not find the obvious *empyset* as its solution, so as the relevant equilibrium to be excluded.
+So, for example, if conditions are computed (from *fourier_elim*) as [a1\*a2+a1\*a3+a2\*a3>0, -(a1\*a2+a1\*a3+a2\*a3)>0] one must exclude the solution from equilibria manually, because *fourier_elim* seems it can not find the obvious *empyset* as its solution, so as the relevant profile to be excluded from equilibria.
+
+*pure_Nash.wxm or mixed_Nash.wxm?*
+
+*pure_Nash.wxm* is faster but does not use *fourier_elim* to find conditions for a profile to be an equilibrium. It finds only equilibria where comparison on maximum against other rewards can be computed. The 'unknown' value on comparisons are excluded from equilibria. So, if, instead of a number, a variable is used for some reward, every possible equilibrium that involves this variable is excluded. To find this equilibrium, proper assumptions, for that variable, must be entered in the second row of *NashData.csv* file.
+
+*mixed_Nash.wxm* is much slower but does use *fourier_elim* to find conditions for a profile to be an equilibrium. For each profile, after solving a system of equations, it solves system of inequalities to check if profile is in equilibrium or not.
+If someone checks the code can see that *mixed_Nash.wxm* can be used to find only pure strategies, if in line 242 
+
+*for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i])))*;  
+
+alters the '*powerset*' command to '*powerset(S_all_set[i], 1)*'. It can be done, but only for small games. The necessity to solve large systems of inequalities for every profile, makes it impossible for *mixed_Nash.wxm* to reach in any way the limit, on size, of the games that *pure_Nash.wxm* can handle. So, what file can, or must be executed, depends on the size of the game and the goals of the user.
