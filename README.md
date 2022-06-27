@@ -168,3 +168,8 @@ So,
 *  Nash[10][2] are the rewards of 10th equilibrium.
 *  Nash[10][1][1] are the probabilities of distribution of 10th equilibrium
 *  Nash[10][1][2] are the conditions for the 10th equilibrium to be.
+
+
+**Limitations**
+Except from the obvious limitations on memory and on length of strings that are constructed (for the last, specially in pure_Nash.wxm, if it remains as it is), limitations derive also from the main commands (*alg_sys* and *fourier_elim*) that actually find equilibria.
+So, if conditions, for example, computed (from *fourier_elim*) as [a1\*a2+a1\*a3+a2\*a3>0, -(a1\*a2+a1\*a3+a2\*a3)>0] one must exclude the solution from equilibria manually, because *fourier_elim* seems it can not find the obvious *empyset* as its solution, so as the relevant equilibrium to be excluded.
