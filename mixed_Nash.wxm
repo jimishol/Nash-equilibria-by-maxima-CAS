@@ -300,8 +300,16 @@ for x in Nash do(
         equilibrium:equilibrium+1,
         x[1][2]:cont,                                   /*instead of the pair of inequalities and the introduced variables, in Nash list, the solutions of them is stored */
         disp(" "),display(equilibrium),
-        disp(x[1][1], sconcat("rewards are ", x[2])), 
-        if scont # "universalset" then disp("contitions are ", cont)
+        disp(x[1][1], "rewards are "), 
+        for ar:1 thru length(x[2]) do disp(sconcat("player's ", ar ," = ", x[2][ar])), 
+        if scont # "universalset" then (disp("conditions are "),
+            len:length(args(cont)),
+            for k:1 thru len do (
+                if k #1 then disp("----- OR -----"),
+                disp(unique(args(cont)[k]))
+            )
+        ),
+        disp("----------------------------------------------------------------------------")
     )    
 )$
 /* [wxMaxima: input   end   ] */
