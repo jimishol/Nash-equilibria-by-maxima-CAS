@@ -184,3 +184,15 @@ If someone checks the code can see that *mixed_Nash.wxm* can be used to find onl
 *for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i])))*;  
 
 alters the '*powerset*' command to '*powerset(S_all_set[i], 1)*'. It can be done, but only for small games. The necessity to solve large systems of inequalities for every profile, makes it impossible for *mixed_Nash.wxm* to reach in any way the limit, on size, of the games that *pure_Nash.wxm* can handle. So, what file can, or must be executed, depends on the size of the game and the goals of the user.
+
+### <p align="center"> Symmetric games </p>
+
+Not only when a game gets the hardware or the '*maxima*' at their limits but, every time, one must be aware if that particular game is symmetric or not, so as to use '*mixed_symmetric_Nash.wxm*' instead of '*mixed_Nash.wxm*'. Because supports are elements of the powerset of actions, checking every profile means checking every element of the Cartesian product of powersets. For example, for a 4 player game with 4 actions for each one, '*mixed_Nash.wxm*' have to check 15^4=50625 cases, solving 1 system of equalities and 1 of inequalities for each case.
+
+If we know that a game is symmetric, we can use '*mixed_symmetric_Nash.wxm*'. That will check only 3060 cases, for the example above.
+
+We can consider symmetric games as games between profiles and not players. Every subset of actions is an element of the powerset of actions with integer key index. Thus, the powerset is provided with an order, defined by the keys of its elements. So, [S17, S5, S10] is equivalent to [S5, S10, S17]. That means if player1 with support S17 facing player2 with support S5 and player3 with support S10 is in equilibrium, then player1 with support S5 facing player2 with support S10 and player3 with support S17 is in equilibrium too. Thus, '*mixed_symmetric_Nash.wxm*' checks only tuples of supports with increased index for their elements.
+
+Output is simpler too. If one solve for the symmetric game in '*NashData.csv_symmetry_game*' file, with '*mixed_Nash.wxm*' he gets 10 equilibria. With '*mixed_symmetric_Nash.wxm*'he gets only 4 equilibria. That is because every permutation on players is considered equivalent between each other. That, must be remembered every time one looks at equilibria found ny the '*mixed_symmetric_Nash.wxm*'.
+
+'*mixed_symmetric_Nash.wxm*' is almost exact copy of '*mixed_Nash.wxm*', except that it checks fewer profiles.
