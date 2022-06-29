@@ -223,9 +223,12 @@ equilibrium as [list of actions, list of rewards]
 
 
 /* [wxMaxima: input   start ] */
-for x in Nash_rw do(
-equilibrium:equilibrium+1, display(equilibrium),
-    disp(x)
+for x in Nash_rw do(                        
+        equilibrium:equilibrium+1,
+        disp(" "),display(equilibrium),
+        disp(x[1], "rewards are "), 
+        for ar:1 thru length(x[2]) do disp(sconcat("player's ", ar ," = ", x[2][ar])),
+        disp("----------------------------------------------------------------------------")      
 );
 /* [wxMaxima: input   end   ] */
 
