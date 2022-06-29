@@ -195,4 +195,4 @@ We can consider symmetric games as games between profiles and not players. Every
 
 Output is simpler too. If one solve for the symmetric game in '*NashData.csv_symmetry_game*' file, with '*mixed_Nash.wxm*' he gets 10 equilibria. With '*mixed_symmetric_Nash.wxm*'he gets only 4 equilibria. That is because every permutation on players is considered equivalent between each other. That, must be remembered every time one looks at equilibria found ny the '*mixed_symmetric_Nash.wxm*'.
 
-'*mixed_symmetric_Nash.wxm*' is almost exact copy of '*mixed_Nash.wxm*', except that it checks fewer profiles.
+'*mixed_symmetric_Nash.wxm*' is almost exact copy of '*mixed_Nash.wxm*', except that it checks fewer profiles. The '*mixed_symmetric_Nash.wxm*' is not checking if a game is actually symmetric. So the use of it in non symmetric games will miss some equilibria.
