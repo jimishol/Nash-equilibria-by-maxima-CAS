@@ -338,8 +338,7 @@ for x in Nash do(
     cont:fourier_elim(append(x[1][2][1], assumptions), append(x[1][2][2], assum)), scont:sconcat(cont), 
     if scont = "emptyset" then (                /* If the solution to inequalities solved against the variables introduced by solution
                                                                                                                                     is empty then there is no equilibrium */
-            delete(x, Nash),
-            delete(x, mixed_Nash)
+            mixed_Nash:delete(x, mixed_Nash)
         )
         else (                         
         equilibrium:equilibrium+1,

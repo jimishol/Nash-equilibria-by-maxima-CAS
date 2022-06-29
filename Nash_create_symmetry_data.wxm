@@ -88,7 +88,8 @@ Input of randomness
 
 
 /* [wxMaxima: input   start ] */
-rdm: N*actions^N$                                         /* Random rewards are created in integral N times more than needed so as to be easy to find random but different rewards. */
+rdm: actions^N$                                         /* Random rewards are created in integral equal to profiles of non symmetric games.
+                                                                                Must be easy to find random but different rewards for the symmetry.*/
 /* [wxMaxima: input   end   ] */
 
 
