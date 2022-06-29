@@ -65,7 +65,7 @@ data automatically. In case that rewards is desirable to include operators or va
 
 1,1,1,"1-c". 
 
-Edit and execute the file <b>Nash_create_data.wxm</b>
+> Edit and execute the file <b>Nash_create_data.wxm</b>
 
 Line 60 for the possible assumptions and line 65 for the players and their actions.
 
@@ -92,7 +92,7 @@ Nash equilibria</font></font></p>
 execute
 
 
-<p><span lang="en-US"><B>maxima -b ~/pure_Nash.wxm</B></span></p>
+> <p><span lang="en-US"><B>maxima -b ~/pure_Nash.wxm</B></span></p>
 <p><span lang="en-US">in a terminal.</span></p>
 <p><span lang="en-US">The equilibria are given as a list of pairs of
 equilibrium and rewards for this equilibrium lists. For example in</span></p>
@@ -149,7 +149,7 @@ Nash equilibria</font></font></p>
 execute
 
 
-<p><span lang="en-US"><B>maxima -b ~/mixed_Nash.wxm</B></span></p>
+> <p><span lang="en-US"><B>maxima -b ~/mixed_Nash.wxm</B></span></p>
 <p><span lang="en-US">in a terminal.</span></p>
 <p><span lang="en-US">The equilibria are given as a list of pairs of
 equilibrium (as a list of probabilities) and list of rewards, one for each player, for this equilibrium. 
@@ -174,7 +174,7 @@ So,
 Except from the obvious limitations on memory and on length of strings that are constructed (for the last, specially in pure_Nash.wxm, if it remains as it is), limitations derive also from the main commands (*alg_sys* and *fourier_elim*) that actually find equilibria.
 So, for example, if conditions are computed (from *fourier_elim*) as [a1\*a2+a1\*a3+a2\*a3>0, -(a1\*a2+a1\*a3+a2\*a3)>0] one must exclude the solution from equilibria manually, because *fourier_elim* seems it can not find the obvious *empyset* as its solution, so as the relevant profile to be excluded from equilibria.
 
-*pure_Nash.wxm or mixed_Nash.wxm?*
+#### *pure_Nash.wxm or mixed_Nash.wxm?*
 
 *pure_Nash.wxm* is faster but does not use *fourier_elim* to find conditions for a profile to be an equilibrium. It finds only equilibria where comparison on maximum against other rewards can be computed. The 'unknown' value on comparisons are excluded from equilibria. So, if, instead of a number, a variable is used for some reward, every possible equilibrium that involves this variable is excluded. To find this equilibrium, proper assumptions, for that variable, must be entered in the second row of *NashData.csv* file.
 
@@ -196,3 +196,13 @@ We can consider symmetric games as games between profiles and not players. Every
 Output is simpler too. If one solve for the symmetric game in '*NashData.csv_symmetry_game*' file, with '*mixed_Nash.wxm*' he gets 10 equilibria. With '*mixed_symmetric_Nash.wxm*'he gets only 4 equilibria. That is because every permutation on players is considered equivalent between each other. That, must be remembered every time one looks at equilibria found ny the '*mixed_symmetric_Nash.wxm*'.
 
 '*mixed_symmetric_Nash.wxm*' is almost exact copy of '*mixed_Nash.wxm*', except that it checks fewer profiles. The '*mixed_symmetric_Nash.wxm*' is not checking if a game is actually symmetric. So the use of it in non symmetric games will miss some equilibria.
+
+### Creation of symmetric games
+
+In order to create a symmetric game, one can edit and use the '*Nash_create_symmetry_data.wxm*'. Editing consists from correcting at line 55 the number of players and at line 60 the number of actions each player has in his disposal. Execute
+
+> **maxima -b Nash_create_symmetry_data.wxm**
+
+The excecution will create a '*NashData.csv*' file with all necessary rewards as '*sym###*', where '*###*' is different number for each necessary reward. After that **either delete all '*sym*' characters** to produce a random game or **replace every occurrence of each of '*sym###*'s** to what is desired.
+
+Just informatively, my laptop solved a symmetric game, with 3 players and 3 actions for each one, by '*mixed_Nash.wxm*' in 28 seconds and by '*mixed_symmetric_Nash.wxm*' in 7 seconds.

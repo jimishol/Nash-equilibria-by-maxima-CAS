@@ -1,0 +1,247 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: comment start ]
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: title   start ]
+Random data creation for multiplayer games
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+stat:make_random_state (true) $ set_random_state (stat)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Input
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: comment start ]
+of the number of players and the numbers of their actions.
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Number of players and number of their actions. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*The format begins with number of players and is [Number of players, number of player's 1 actions, of player's 2, ..., and so on] */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+assumptions:"assume( )"$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+N: 3$              /* Number of players */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+actions: 3$     /*numper of actions per player */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Optionally create random actions, given only the number of players.
+Comment either the above line or the one. 
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* actions: 2+random(rdm)$ */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+n:makelist(actions, i, 2, N+1)$ n:append([N], n)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+Automatic creation of players' rewards.
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: comment start ]
+Input of randomness
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: input   start ] */
+rdm: N*actions^N$                                         /* Random rewards are created in integral N times more than needed so as to be easy to find random but different rewards. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Player's rewards. */
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+list_of_rewards:[]$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+reward():=block(
+    while member(r: random(rdm), list_of_rewards) do (not_found:true),
+    list_of_rewards: append([r], list_of_rewards),
+    return(concat(sym, r))
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop:""$ list_vars_0:makelist(concat(s, i), i, N)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+permut_vars:listify(permutations(rest(list_vars_0)))$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+s0:1$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 1 thru 2 do 
+    Loop:concat(Loop, "for s", ar, ": ", 1, " thru actions do 
+        ")$                                 /*This loop is not mathematicall needed and next loop could start from 1. With it some rewards are recalculated but it is easier 
+                                                        to find rewards of other players knowning all those of 1st player. */ 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 3 thru N do 
+    Loop:concat(Loop, "for s", ar, ": s", ar-1, " thru actions do 
+        ")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop:sconcat(Loop, "(
+    rwrd:reward(),
+    for x in permut_vars do 
+        arraysetapply(e, append([ar], [s1], ev(x)), rwrd)
+    )")$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+ar:1$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+eval_string(Loop);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop_rw:"for ar: 2 thru N do 
+"$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+main_rw:""$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+for ar: 1 thru N do (
+    Loop_rw:concat(Loop_rw, "for s", ar, ": ", 1, " thru actions do 
+        "),
+    main_rw:sconcat(main_rw, if ar = 1 then "s" else ", s", ar)
+    
+)$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Loop_rw;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+main_rw:sconcat("(
+t:[", ev(main_rw), "],
+tmp:t[ar],
+first_profile:append([1],[tmp], firstn(t, ar-1), rest(t, ar)),
+first_rw:eval_string(sconcat(\"e[\",simplode(first_profile, \", \"),\"]\")),
+arraysetapply(e, append([ar], t), first_rw)
+    )");
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+whole_string:concat(Loop_rw, main_rw);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+eval_string(whole_string);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+store_append: file_output_append;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: false$
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data(n, "~/NashData.csv"); 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: true;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data([assumptions], "~/NashData.csv"); 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+write_data(e, "~/NashData.csv"); 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+file_output_append: store_append;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
