@@ -67,7 +67,7 @@ data automatically. In case that rewards is desirable to include operators or va
 
 Edit and execute the file <b>Nash_create_data.wxm</b>
 
-Line 60 for the players and their actions and line 65 for the possible assumptions.
+Line 60 for the possible assumptions and line 65 for the players and their actions.
 
 The execution will create <span lang="en-US"><b>NashData.csv</b> </span><span lang="en-US">file
 with random, 1 digit, rewards.</span>
@@ -78,7 +78,7 @@ digit rewards by the desired ones. In repository exists an edited examble of thi
 and gives the 60th row as a list. For the example above the first
 row of data should be given as</span></p>
 <p><span lang="en-US">n:[</span><span lang="en-US">7,8,9,3,6,2,9,6</span><span lang="en-US">]</span></p>
-<p><span lang="en-US">(Alternatively, by commenting the basic 60th row, where ‘n’ list is defined, and un-commenting the 76th and 81th rows,
+<p><span lang="en-US">(Alternatively, by commenting the basic 65th row, where ‘n’ list is defined, and un-commenting the 76th and 81th rows,
 one can give (in 76th row) only the number of players, for example, as</span></p>
 <p><span lang="en-US">N:7</span></p>
 <p><span lang="en-US">and the execution of </span><span lang="en-US"><i>Nash_create_data</i>

@@ -57,12 +57,12 @@ of the number of players and the numbers of their actions.
 
 
 /* [wxMaxima: input   start ] */
-n: [2,2,2]$                            
+assumptions:"assume( )"$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
-assumptions:"assume( )"$
+n: [2,2,2]$                            
 /* [wxMaxima: input   end   ] */
 
 
