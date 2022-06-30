@@ -229,7 +229,7 @@ for x in Nash_rw do(
         disp(x[1], "rewards are "), 
         for ar:1 thru length(x[2]) do disp(sconcat("player's ", ar ," = ", x[2][ar])),
         disp("----------------------------------------------------------------------------")      
-);
+)$
 /* [wxMaxima: input   end   ] */
 
 
