@@ -174,6 +174,8 @@ So,
 Except from the obvious limitations on memory and on length of strings that are constructed (for the last, specially in pure_Nash.wxm, if it remains as it is), limitations derive also from the main commands (*alg_sys* and *fourier_elim*) that actually find equilibria.
 So, for example, if conditions are computed (from *fourier_elim*) as [a1\*a2+a1\*a3+a2\*a3>0, -(a1\*a2+a1\*a3+a2\*a3)>0] one must exclude the solution from equilibria manually, because *fourier_elim* seems it can not find the obvious *empyset* as its solution, so as the relevant profile to be excluded from equilibria.
 
+*Most important is* that in **games with three or more players non linear systems are created** and 'alg_sys', in many cases, might not be able to solve them resulting the empty set as solutions. To confirm, one might create a random symmetric game of three players with three actions for each one. Most of the times, the list of founded equilibria will not include a symmetric equilibrium that theoretically exists.
+
 #### *pure_Nash.wxm or mixed_Nash.wxm?*
 
 *pure_Nash.wxm* is faster but does not use *fourier_elim* to find conditions for a profile to be an equilibrium. It finds only equilibria where comparison on maximum against other rewards can be computed. The 'unknown' value on comparisons are excluded from equilibria. So, if, instead of a number, a variable is used for some reward, every possible equilibrium that involves this variable is excluded. To find this equilibrium, proper assumptions, for that variable, must be entered in the second row of *NashData.csv* file.
