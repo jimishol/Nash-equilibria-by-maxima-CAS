@@ -176,6 +176,8 @@ So, for example, if conditions are computed (from *fourier_elim*) as [a1\*a2+a1\
 
 *Most important is* that in **games with three or more players non linear systems are created** and 'alg_sys', in many cases, might not be able to solve them resulting the empty set as solutions. To confirm, one might create a random symmetric game of three players with three actions for each one. Most of the times, the list of founded equilibria will not include a symmetric equilibrium that theoretically exists.
 
+In case anyone wants to investigate or try to solve, by hand, what, resulting the empty set, '*alg_sys* 'failed to solve, can execute the '***one_mixed_Nash.wxm***' file. It will ask for the list of supports, one for each player, to check. After solutions, if '*alg_sys*' didn't result an empty set, or no solutions, if '*alg_sys*' did result an empty set, the system of equations that '*alg_sys*' tried to solve will be displayed as the '*eq_all*' list. The list of unknowns will be displayed as the '*P_one*' list. Also, system of inequalities, for a might involved '*fourier_elim*' command,  will be displayed as '*fourier_all*' list and the relevant unknowns as '*fourier_assum*' list.
+
 #### *pure_Nash.wxm or mixed_Nash.wxm?*
 
 *pure_Nash.wxm* is faster but does not use *fourier_elim* to find conditions for a profile to be an equilibrium. It finds only equilibria where comparison on maximum against other rewards can be computed. The 'unknown' value on comparisons are excluded from equilibria. So, if, instead of a number, a variable is used for some reward, every possible equilibrium that involves this variable is excluded. To find this equilibrium, proper assumptions, for that variable, must be entered in the second row of *NashData.csv* file.
