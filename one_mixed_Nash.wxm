@@ -238,35 +238,16 @@ mixed_fun(S):=block([c],
 /* [wxMaxima: input   end   ] */
 
 
-/* [wxMaxima: input   start ] */
-/*for i:1 thru N do subs[i]:full_listify(disjoin({}, powerset(S_all_set[i]))); */       /*for every player create the set of all possible supports if the solution to inequalities is not empty*/
-/* [wxMaxima: input   end   ] */
+/* [wxMaxima: comment start ]
+Insert  in cart_list list, the element or elements you like to check for equilibrium.
+In the form
+cart_list: [ [support1_list, support2_list, ..., supportN_list], [support1_list, support2_list, ..., supportN_list], ...]
+   [wxMaxima: comment end   ] */
 
 
 /* [wxMaxima: input   start ] */
-/*list_subs:makelist(subs[i],i,N)$*/
+cart_list: [ [[1,2],[1],[1,2,3]] ];
 /* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-/*string_list_subs:simplode(list_subs, ", ")$/*
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-/*cart_list:eval_string(concat("cartesian_product_list(", string_list_subs, ")"))$*/    /*the cartesian product on sets of all possible supports (subsets of set of actions) for each player*/
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-cart_list: [read("-- Enter support, like [[12],[1],[123], ...], to evaluate")];
-/* [wxMaxima: input   end   ] */
-/* [wxMaxima: question  start ] */
-<math><st>-- Enter support, like [[12],[1],[123], ...], to evaluate</st><st> </st></math>
-/* [wxMaxima: question  end   ] */
-/* [wxMaxima: answer  start ] */
-[[1,2,3],[1,3],[1,2]];
-/* [wxMaxima: answer  end   ] */
 
 
 /* [wxMaxima: input   start ] */
