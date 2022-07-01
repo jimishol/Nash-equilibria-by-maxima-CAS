@@ -299,7 +299,7 @@ whole:sconcat(S_loop, "(", profiles_string, ")")$
 
 
 /* [wxMaxima: input   start ] */
-cart_list: eval_string(whole)$
+eval_string(whole)$
 /* [wxMaxima: input   end   ] */
 
 
