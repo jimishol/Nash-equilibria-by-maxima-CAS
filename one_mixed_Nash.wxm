@@ -238,15 +238,20 @@ mixed_fun(S):=block([c],
 /* [wxMaxima: input   end   ] */
 
 
+/* [wxMaxima: input   start ] */
+cart_list:makelist([],i,1,1)$
+/* [wxMaxima: input   end   ] */
+
+
 /* [wxMaxima: comment start ]
 Insert  in cart_list list, the element or elements you like to check for equilibrium.
 In the form
-cart_list: [ [support1_list, support2_list, ..., supportN_list], [support1_list, support2_list, ..., supportN_list], ...]
+cart_list[1]: [support1_list, support2_list, ..., supportN_list]
    [wxMaxima: comment end   ] */
 
 
 /* [wxMaxima: input   start ] */
-cart_list: [ [[1,2],[1],[1,2,3]] ];
+cart_list[1]: [[1,2,3],[1,2,3],[1,2,3]];
 /* [wxMaxima: input   end   ] */
 
 
@@ -302,49 +307,33 @@ for x in Nash do(
                 disp(unique(args(cont)[k]))
             )
         ),
-        disp("----------------------------------------------------------------------------")
+        disp("----------------------------------------------------------------------------"),
+         print("The unkown variables of inequalities tried to solve 'fourier_elim' are in list 'fourier_assum'."),
+        display(fourier_assum),
+        print("The inequalities tried to solve 'fourier_elim' are in list 'fourier_all'."),
+        display(fourier_all)
     )    
 )$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
-print("The unkown variables of equations tried to solve 'alg_sys' are in list 'P_one'.")$
+disp("The unkown variables of equations tried to solve 'alg_sys' are in list 'P_one'.")$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
-display(P_one);
+display(P_one)$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
-print("The equations tried to solve 'alg_sys' are in list 'eq_all'.")$
+disp("The equations tried to solve 'alg_sys' are in list 'eq_all'.")$
 /* [wxMaxima: input   end   ] */
 
 
 /* [wxMaxima: input   start ] */
 display(eq_all)$
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-print("The unkown variables of inequalities tried to solve 'fourier_elim' are in list 'fourier_assum'.")$
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-display(fourier_assum)$
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-print("The inequalities tried to solve 'fourier_elim' are in list 'fourier_all'.")$
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-display(fourier_all)$
 /* [wxMaxima: input   end   ] */
 
 
